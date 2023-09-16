@@ -42,6 +42,8 @@ func livenessHandler(r interface{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := checker.Liveness(r.Context())
 		if err != nil {
+			err = fmt.Errorf("liveness check error: %w", err)
+
 			log.Println(err)
 			w.WriteHeader(http.StatusServiceUnavailable)
 			w.Write([]byte(err.Error()))
@@ -63,6 +65,8 @@ func readinessHandler(r interface{}) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		err := checker.Readiness(r.Context())
 		if err != nil {
+			err = fmt.Errorf("readiness check failed: %w", err)
+
 			log.Println(err)
 			w.WriteHeader(http.StatusServiceUnavailable)
 			w.Write([]byte(err.Error()))
