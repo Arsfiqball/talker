@@ -83,3 +83,26 @@ func TestError(t *testing.T) {
 		// }
 	})
 }
+
+func TestErrorIsOneOf(t *testing.T) {
+	t.Run("one of multiple errors", func(t *testing.T) {
+		var err error
+
+		stdErr := errors.New("test")
+		namedErr1 := powercode.NewError("TEST1", "test 1")
+		namedErr2 := powercode.NewError("TEST2", "test 2")
+		namedErr3 := powercode.NewError("TEST3", "test 3")
+		namedErr4 := powercode.NewError("TEST4", "test 4")
+
+		err = namedErr1.Wrap(stdErr)
+		err = namedErr4.Wrap(err)
+
+		if !powercode.ErrorIsOneOf(err, namedErr1, namedErr2, namedErr3) {
+			t.Fatal("error namedErr1 should be correct")
+		}
+
+		if powercode.ErrorIsOneOf(err, namedErr2, namedErr3) {
+			t.Fatal("error namedErr2 should be incorrect")
+		}
+	})
+}

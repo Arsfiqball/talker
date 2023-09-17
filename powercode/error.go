@@ -1,6 +1,7 @@
 package powercode
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 )
@@ -105,4 +106,14 @@ func TraceError(err error) []string {
 	}
 
 	return result
+}
+
+func ErrorIsOneOf(err error, targets ...error) bool {
+	for _, target := range targets {
+		if errors.Is(err, target) {
+			return true
+		}
+	}
+
+	return false
 }
