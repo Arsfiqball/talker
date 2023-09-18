@@ -52,8 +52,8 @@ func TestContainer(t *testing.T) {
 type sampleStringType string
 
 func TestMiddleware(t *testing.T) {
-	t.Run("sequential", func(t *testing.T) {
-		callback := transcode.Sequential(
+	t.Run("pipe ctx", func(t *testing.T) {
+		callback := transcode.PipeCtx(
 			func(ctx transcode.Ctx, next transcode.Next) error {
 				transcode.Set(ctx, sampleStringType("bar"))
 				return next()
@@ -93,5 +93,62 @@ func TestMiddleware(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
+	})
+
+	t.Run("switch pipe ctx", func(t *testing.T) {
+		type routeName string
+
+		route := func(foo string) func(transcode.Ctx) bool {
+			return func(ctx transcode.Ctx) bool {
+				var name routeName
+
+				transcode.Get(ctx, &name)
+
+				return string(name) == foo
+			}
+		}
+
+		middleware1 := func(ctx transcode.Ctx, next transcode.Next) error {
+			var name routeName
+
+			err := transcode.Get(ctx, &name)
+			if err != nil {
+				return err
+			}
+
+			if string(name) != "baz" {
+				t.Fatal("name != baz")
+			}
+
+			return next()
+		}
+
+		middleware2 := func(ctx transcode.Ctx, next transcode.Next) error {
+			var name routeName
+
+			err := transcode.Get(ctx, &name)
+			if err != nil {
+				return err
+			}
+
+			if string(name) != "bar" {
+				t.Fatal("name != bar")
+			}
+
+			return next()
+		}
+
+		callback := transcode.PipeCtx(
+			transcode.CaseCtx(route("baz"), transcode.PipeCtx(middleware1)),
+			transcode.CaseCtx(route("bar"), transcode.PipeCtx(middleware2)),
+		)
+
+		ctx1 := transcode.NewCtx()
+		transcode.Set(ctx1, routeName("baz"))
+		callback(ctx1)
+
+		ctx2 := transcode.NewCtx()
+		transcode.Set(ctx2, routeName("bar"))
+		callback(ctx2)
 	})
 }

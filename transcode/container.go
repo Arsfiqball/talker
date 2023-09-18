@@ -58,7 +58,7 @@ type Next func() error
 
 type Middleware func(ctx Ctx, next Next) error
 
-func Sequential(middlewares ...Middleware) Callback {
+func PipeCtx(middlewares ...Middleware) Callback {
 	return func(ctx Ctx) error {
 		var next Next
 
@@ -74,5 +74,16 @@ func Sequential(middlewares ...Middleware) Callback {
 		}
 
 		return next()
+	}
+}
+
+func CaseCtx(cond func(Ctx) bool, pipe Callback) Middleware {
+	return func(ctx Ctx, next Next) error {
+		// If the condition is not met, skip this middleware.
+		if !cond(ctx) {
+			return next()
+		}
+
+		return pipe(ctx)
 	}
 }
