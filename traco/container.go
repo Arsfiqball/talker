@@ -1,4 +1,4 @@
-package transcode
+package traco
 
 func Pipe[T any](middlewares ...func(T, func() error) error) func(ctx T) error {
 	return func(ctx T) error {

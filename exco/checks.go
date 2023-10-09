@@ -1,4 +1,4 @@
-package excode
+package exco
 
 import (
 	"context"

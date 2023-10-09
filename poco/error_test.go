@@ -1,11 +1,11 @@
-package powercode_test
+package poco_test
 
 import (
 	"testing"
 
 	"errors"
 
-	"github.com/Arsfiqball/talker/powercode"
+	"github.com/Arsfiqball/talker/poco"
 )
 
 func TestError(t *testing.T) {
@@ -13,7 +13,7 @@ func TestError(t *testing.T) {
 		var err error
 
 		stdErr := errors.New("test")
-		pocoErr := powercode.NewError("TEST", "test")
+		pocoErr := poco.NewError("TEST", "test")
 
 		err = pocoErr.Wrap(stdErr)
 
@@ -29,8 +29,8 @@ func TestError(t *testing.T) {
 	t.Run("two level", func(t *testing.T) {
 		var err error
 
-		namedErr1 := powercode.NewError("TEST1", "test 1")
-		namedErr2 := powercode.NewError("TEST2", "test 2")
+		namedErr1 := poco.NewError("TEST1", "test 1")
+		namedErr2 := poco.NewError("TEST2", "test 2")
 
 		err = namedErr2.Wrap(namedErr1)
 
@@ -47,10 +47,10 @@ func TestError(t *testing.T) {
 		var err error
 
 		stdErr := errors.New("test")
-		namedErr1 := powercode.NewError("TEST1", "test 1")
-		namedErr2 := powercode.NewError("TEST2", "test 2")
-		namedErr3 := powercode.NewError("TEST3", "test 3")
-		namedErr4 := powercode.NewError("TEST4", "test 4")
+		namedErr1 := poco.NewError("TEST1", "test 1")
+		namedErr2 := poco.NewError("TEST2", "test 2")
+		namedErr3 := poco.NewError("TEST3", "test 3")
+		namedErr4 := poco.NewError("TEST4", "test 4")
 
 		err = namedErr1.Wrap(stdErr)
 		err = namedErr2.Wrap(err)
@@ -89,19 +89,19 @@ func TestErrorIsOneOf(t *testing.T) {
 		var err error
 
 		stdErr := errors.New("test")
-		namedErr1 := powercode.NewError("TEST1", "test 1")
-		namedErr2 := powercode.NewError("TEST2", "test 2")
-		namedErr3 := powercode.NewError("TEST3", "test 3")
-		namedErr4 := powercode.NewError("TEST4", "test 4")
+		namedErr1 := poco.NewError("TEST1", "test 1")
+		namedErr2 := poco.NewError("TEST2", "test 2")
+		namedErr3 := poco.NewError("TEST3", "test 3")
+		namedErr4 := poco.NewError("TEST4", "test 4")
 
 		err = namedErr1.Wrap(stdErr)
 		err = namedErr4.Wrap(err)
 
-		if !powercode.ErrorIsOneOf(err, namedErr1, namedErr2, namedErr3) {
+		if !poco.ErrorIsOneOf(err, namedErr1, namedErr2, namedErr3) {
 			t.Fatal("error namedErr1 should be correct")
 		}
 
-		if powercode.ErrorIsOneOf(err, namedErr2, namedErr3) {
+		if poco.ErrorIsOneOf(err, namedErr2, namedErr3) {
 			t.Fatal("error namedErr2 should be incorrect")
 		}
 	})

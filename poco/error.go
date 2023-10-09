@@ -1,4 +1,4 @@
-package powercode
+package poco
 
 import (
 	"errors"

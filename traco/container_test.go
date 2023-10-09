@@ -1,9 +1,9 @@
-package transcode_test
+package traco_test
 
 import (
 	"testing"
 
-	"github.com/Arsfiqball/talker/transcode"
+	"github.com/Arsfiqball/talker/traco"
 )
 
 type sampleCtx struct {
@@ -33,7 +33,7 @@ func TestTypedContainer(t *testing.T) {
 			return next()
 		}
 
-		transcode.Pipe(middleware1, middleware2)(&sampleCtx{})
+		traco.Pipe(middleware1, middleware2)(&sampleCtx{})
 	})
 
 	t.Run("switch case pipe", func(t *testing.T) {
@@ -75,9 +75,9 @@ func TestTypedContainer(t *testing.T) {
 			return next()
 		}
 
-		pipe := transcode.Pipe(
-			transcode.Case(route("baz"), toRoute1, transcode.Pipe(handleRoute1)),
-			transcode.Case(route("bar"), toRoute2, transcode.Pipe(handleRoute2)),
+		pipe := traco.Pipe(
+			traco.Case(route("baz"), toRoute1, traco.Pipe(handleRoute1)),
+			traco.Case(route("bar"), toRoute2, traco.Pipe(handleRoute2)),
 		)
 
 		pipe(&sampleCtx{foo: "baz"})

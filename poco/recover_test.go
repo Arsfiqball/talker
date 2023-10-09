@@ -1,9 +1,9 @@
-package powercode_test
+package poco_test
 
 import (
 	"testing"
 
-	"github.com/Arsfiqball/talker/powercode"
+	"github.com/Arsfiqball/talker/poco"
 )
 
 func funcThatPanics() {
@@ -30,10 +30,10 @@ func someProxyFunc() {
 
 func TestRecover(t *testing.T) {
 	t.Run("panic", func(t *testing.T) {
-		var rp powercode.RecoveredPanic
+		var rp poco.RecoveredPanic
 
-		func(e *powercode.RecoveredPanic) {
-			defer powercode.Recover(e)
+		func(e *poco.RecoveredPanic) {
+			defer poco.Recover(e)
 
 			someProxyFunc()
 		}(&rp)
