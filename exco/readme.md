@@ -36,14 +36,21 @@ cb := exco.Sequential(
         // do something
         return nil
     },
-    func(ctx context.Context) error {
-        // do something
-        return nil
-    },
-    func(ctx context.Context) error {
-        // do something
-        return nil
-    },
+    exco.Timeout(
+        func(ctx context.Context) error {
+            // do something
+            return nil
+        },
+        30 * time.Second, // timeout after 30 seconds
+    ),
+    exco.Retry(
+        func(ctx context.Context) error {
+            // do something
+            return nil
+        },
+        5, // retry 5 times
+        5 * time.Second, // wait 5 seconds between each retry
+    ),
 )
 
 err := cb(context.Background())
@@ -60,14 +67,17 @@ cb := exco.Parallel(
         // do something
         return nil
     },
-    func(ctx context.Context) error {
+    exco.Timeout(
+        func(ctx context.Context) error {
+            // do something
+            return nil
+        },
+        30 * time.Second, // timeout after 30 seconds
+    ),
+    exco.IgnoreError(func(ctx context.Context) error {
         // do something
-        return nil
-    },
-    func(ctx context.Context) error {
-        // do something
-        return nil
-    },
+        return errors.New("this error will be ignored")
+    }),
 )
 
 err := cb(context.Background())
@@ -82,10 +92,18 @@ proc := exco.Process{
         // do something
         return nil
     },
-    Ready: func(ctx context.Context) error {
+    Live: func(ctx context.Context) error {
         // do something
         return nil
     },
+    Ready: exco.Parallel(
+        func(ctx context.Context) error {
+            // do something
+            return nil
+        },
+        // readiness check of http server at port 8080
+        exco.HttpGetCheck("http://localhost:8080/readiness"),
+    ),
     Stop: func(ctx context.Context) error {
         // do something
         return nil
