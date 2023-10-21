@@ -87,3 +87,15 @@ func IgnoreError(callback Callback) Callback {
 		return nil
 	}
 }
+
+// Atomic runs commit and rollback in sequence.
+func Atomic(commit Callback, rollback Callback) Callback {
+	return func(ctx context.Context) error {
+		err := commit(ctx)
+		if err != nil {
+			return rollback(ctx)
+		}
+
+		return nil
+	}
+}

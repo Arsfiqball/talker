@@ -2,6 +2,7 @@ package exco_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 
 	"github.com/Arsfiqball/talker/exco"
@@ -162,6 +163,70 @@ func TestIgnoreError(t *testing.T) {
 
 		if res.a != 1 {
 			t.Errorf("res.a should be 1, got %d", res.a)
+		}
+	})
+}
+
+func TestAtomic(t *testing.T) {
+	t.Run("should run commit and without rollback", func(t *testing.T) {
+		var res struct {
+			a int
+			b int
+		}
+
+		cb := exco.Atomic(
+			func(ctx context.Context) error {
+				res.a += 1
+				return nil
+			},
+			func(ctx context.Context) error {
+				res.b += 1
+				return nil
+			},
+		)
+
+		err := cb(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if res.a != 1 {
+			t.Errorf("res.a should be 1, got %d", res.a)
+		}
+
+		if res.b != 0 {
+			t.Errorf("res.b should be 0, got %d", res.b)
+		}
+	})
+
+	t.Run("should run commit and rollback", func(t *testing.T) {
+		var res struct {
+			a int
+			b int
+		}
+
+		cb := exco.Atomic(
+			func(ctx context.Context) error {
+				res.a += 1
+				return errors.New("commit error")
+			},
+			func(ctx context.Context) error {
+				res.b += 1
+				return nil
+			},
+		)
+
+		err := cb(context.Background())
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if res.a != 1 {
+			t.Errorf("res.a should be 1, got %d", res.a)
+		}
+
+		if res.b != 1 {
+			t.Errorf("res.b should be 1, got %d", res.b)
 		}
 	})
 }
