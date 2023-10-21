@@ -2,9 +2,9 @@
 
 Complete building blocks to develop Codec & Storm based applications.
 
-| Module           | Controls        |
-| ---------------- | --------------- |
-| [exco](/exco/)   | Execution       |
-| [poco](/poco/)   | Powering Code   |
-| [traco](/traco/) | Transport       |
-| [shoco](/shoco/) | Shooting (Test) |
+| Module           | FUnctionality        |
+| ---------------- | -------------------- |
+| [exco](/exco/)   | Execution Controller |
+| [poco](/poco/)   | Powering Context     |
+| [traco](/traco/) | Transport Container  |
+| [shoco](/shoco/) | Shooting Command     |
